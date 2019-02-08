@@ -1,0 +1,352 @@
+  #include <ESP8266WiFi.h>
+  #include "DHT.h"
+  #include <OneWire.h>
+#include <DallasTemperature.h>
+  const char* ssid = "FLATRON";
+  const char* password = "1234567890123";
+  const char* host = "95.161.225.76";
+
+
+OneWire oneWire(D7);
+DallasTemperature ds(&oneWire);
+
+DeviceAddress sensor1 = {0x28, 0xD7, 0x25, 0x77, 0x91, 0x4, 0x2, 0x5F};
+DeviceAddress sensor2 = {0x28, 0xA3, 0xDD, 0x77, 0x91, 0x9, 0x2, 0xA};
+DeviceAddress sensor3 = {0x28, 0xE5, 0x20, 0x77, 0x91, 0x6, 0x2, 0x9F};
+DeviceAddress sensor4 = {0x28, 0xC1, 0x9E, 0x77, 0x91, 0x8, 0x2, 0xC4};
+DeviceAddress sensor5 = {0x28, 0x3B, 0xBC, 0x77, 0x91, 0x9, 0x2, 0xC6};
+DeviceAddress sensor6 = {0x28, 0xD8, 0x36, 0x77, 0x91, 0x4, 0x2, 0x49};
+DeviceAddress sensor7 = {0x28, 0x1A, 0x33, 0x77, 0x91, 0x6, 0x2, 0xFB};
+DeviceAddress sensor8 = {0x28, 0x38, 0x51, 0x77, 0x91, 0x14, 0x2, 0xCC};
+DeviceAddress sensor9 = {0x28, 0x24, 0xCE, 0x77, 0x91, 0x9, 0x2, 0x57};
+DeviceAddress sensor10 = {0x28, 0xCA, 0x6E, 0x77, 0x91, 0x10, 0x2, 0x0};
+
+  void setup() {
+      Serial.begin(115200);
+      delay(100);
+      
+      ds.begin();
+      delay(100);
+      Serial.println();
+      Serial.println();
+      Serial.print("Connecting to ");
+      Serial.println(ssid);
+      
+      WiFi.mode(WIFI_STA);
+      WiFi.begin(ssid, password);
+      
+      while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+      }
+      Serial.println("");
+      Serial.println("WiFi connected");  
+      Serial.println("IP address: ");
+      Serial.println(WiFi.localIP());
+  }  
+  void loop() 
+  {
+               ds.requestTemperatures();
+              WiFiClient client; 
+              
+              if (client.connect(host, 80))
+              { int a1;
+                 a1=ds.getTempC(sensor1);
+                  Serial.print("Sensor 1: ");
+                   Serial.print(a1); // отправляем температуру
+                    Serial.println("C");
+                  Serial.println("GET 1 start.");
+                  client.println("GET /FPGAdev/api/Values/sendDatas?value="+String(a1)+"&type=1&device=7 HTTP/1.1");
+                  client.println("Host: 95.161.225.76");
+                  client.println("User-Agent: arduino-ethernet");
+                  client.println("Connection: close");
+                  client.println();
+                  Serial.println("GET 1 end.");
+
+
+                   client.stop();
+                 
+                  Serial.println("\n[Disconnected]\n\n");
+                  
+               }
+                  
+              else
+               {
+                Serial.println("connection failed!]\n\n");
+                client.stop();
+                
+                }
+
+
+                 
+              if (client.connect(host, 80))
+              {int a2;
+                 a2=ds.getTempC(sensor2);
+                  Serial.print("Sensor 2: ");
+                   Serial.print(a2); // отправляем температуру
+                    Serial.println("C");
+                  Serial.println("GET 2 start.");
+                  client.println("GET /FPGAdev/api/Values/sendDatas?value="+String(a2)+"&type=2&device=7 HTTP/1.1");
+                  client.println("Host: 95.161.225.76");
+                  client.println("User-Agent: arduino-ethernet");
+                  client.println("Connection: close");
+                  client.println();
+                  Serial.println("GET 2 end.");
+
+
+                   client.stop();
+                 
+                  Serial.println("\n[Disconnected]\n\n");
+                  
+               }
+                  
+              else
+               {
+                Serial.println("connection failed!]\n\n");
+                client.stop();
+                
+                }
+
+
+                 
+              if (client.connect(host, 80))
+              {int a3;
+                 a3=ds.getTempC(sensor3);
+                  Serial.print("Sensor 3: ");
+                   Serial.print(a3); // отправляем температуру
+                    Serial.println("C");
+                  Serial.println("GET 3 start.");
+                  client.println("GET /FPGAdev/api/Values/sendDatas?value="+String(a3)+"&type=3&device=7 HTTP/1.1");
+                  client.println("Host: 95.161.225.76");
+                  client.println("User-Agent: arduino-ethernet");
+                  client.println("Connection: close");
+                  client.println();
+                  Serial.println("GET 3 end.");
+
+
+                   client.stop();
+                 
+                  Serial.println("\n[Disconnected]\n\n");
+                  
+               }
+                  
+              else
+               {
+                Serial.println("connection failed!]\n\n");
+                client.stop();
+               
+                }
+
+
+                 
+              if (client.connect(host, 80))
+              {int a4;
+                 a4=ds.getTempC(sensor4);
+                  Serial.print("Sensor 4: ");
+                   Serial.print(a4); // отправляем температуру
+                    Serial.println("C");
+                  Serial.println("GET 4 start.");
+                  client.println("GET /FPGAdev/api/Values/sendDatas?value="+String(a4)+"&type=4&device=7 HTTP/1.1");
+                  client.println("Host: 95.161.225.76");
+                  client.println("User-Agent: arduino-ethernet");
+                  client.println("Connection: close");
+                  client.println();
+                  Serial.println("GET 4 end.");
+
+
+                   client.stop();
+                 
+                  Serial.println("\n[Disconnected]\n\n");
+                  
+               }
+                  
+              else
+               {
+                Serial.println("connection failed!]\n\n");
+                client.stop();
+                
+                }
+
+
+
+                if (client.connect(host, 80))
+              {int a5;
+                 a5=ds.getTempC(sensor5);
+                  Serial.print("Sensor 5: ");
+                   Serial.print(a5); // отправляем температуру
+                    Serial.println("C");
+                  Serial.println("GET 5 start.");
+                  client.println("GET /FPGAdev/api/Values/sendDatas?value="+String(a5)+"&type=5&device=7 HTTP/1.1");
+                  client.println("Host: 95.161.225.76");
+                  client.println("User-Agent: arduino-ethernet");
+                  client.println("Connection: close");
+                  client.println();
+                  Serial.println("GET 5 end.");
+
+
+                   client.stop();
+                 
+                  Serial.println("\n[Disconnected]\n\n");
+                  
+               }
+                  
+              else
+               {
+                Serial.println("connection failed!]\n\n");
+                client.stop();
+                
+                }
+
+
+
+                if (client.connect(host, 80))
+              {int a6;
+                 a6=ds.getTempC(sensor6);
+                  Serial.print("Sensor 6: ");
+                   Serial.print(a6); // отправляем температуру
+                    Serial.println("C");
+                  Serial.println("GET 6 start.");
+                  client.println("GET /FPGAdev/api/Values/sendDatas?value="+String(a6)+"&type=6&device=7 HTTP/1.1");
+                  client.println("Host: 95.161.225.76");
+                  client.println("User-Agent: arduino-ethernet");
+                  client.println("Connection: close");
+                  client.println();
+                  Serial.println("GET 6 end.");
+
+
+                   client.stop();
+                 
+                  Serial.println("\n[Disconnected]\n\n");
+                  
+               }
+                  
+              else
+               {
+                Serial.println("connection failed!]\n\n");
+                client.stop();
+                
+                }
+
+
+
+
+
+                if (client.connect(host, 80))
+              {int a7;
+                 a7=ds.getTempC(sensor7);
+                  Serial.print("Sensor 7: ");
+                   Serial.print(a7); // отправляем температуру
+                    Serial.println("C");
+                  Serial.println("GET 7 start.");
+                  client.println("GET /FPGAdev/api/Values/sendDatas?value="+String(a7)+"&type=7&device=7 HTTP/1.1");
+                  client.println("Host: 95.161.225.76");
+                  client.println("User-Agent: arduino-ethernet");
+                  client.println("Connection: close");
+                  client.println();
+                  Serial.println("GET 7 end.");
+
+
+                   client.stop();
+                 
+                  Serial.println("\n[Disconnected]\n\n");
+                  
+               }
+                  
+              else
+               {
+                Serial.println("connection failed!]\n\n");
+                client.stop();
+                
+                }
+
+
+                 if (client.connect(host, 80))
+              {int a8;
+                 a8=ds.getTempC(sensor8);
+                  Serial.print("Sensor 8: ");
+                   Serial.print(a8); // отправляем температуру
+                    Serial.println("C");
+                  Serial.println("GET 8 start.");
+                  client.println("GET /FPGAdev/api/Values/sendDatas?value="+String(a8)+"&type=8&device=7 HTTP/1.1");
+                  client.println("Host: 95.161.225.76");
+                  client.println("User-Agent: arduino-ethernet");
+                  client.println("Connection: close");
+                  client.println();
+                  Serial.println("GET 8 end.");
+
+
+                   client.stop();
+                 
+                  Serial.println("\n[Disconnected]\n\n");
+                  
+               }
+                  
+              else
+               {
+                Serial.println("connection failed!]\n\n");
+                client.stop();
+                
+                }
+
+
+                 if (client.connect(host, 80))
+              {int a9;
+                 a9=ds.getTempC(sensor9);
+                  Serial.print("Sensor 9: ");
+                   Serial.print(a9); // отправляем температуру
+                    Serial.println("C");
+                  Serial.println("GET 9start.");
+                  client.println("GET /FPGAdev/api/Values/sendDatas?value="+String(a9)+"&type=9&device=7 HTTP/1.1");
+                  client.println("Host: 95.161.225.76");
+                  client.println("User-Agent: arduino-ethernet");
+                  client.println("Connection: close");
+                  client.println();
+                  Serial.println("GET 9 end.");
+
+
+                   client.stop();
+                 
+                  Serial.println("\n[Disconnected]\n\n");
+                  
+               }
+                  
+              else
+               {
+                Serial.println("connection failed!]\n\n");
+                client.stop();
+                
+                }
+
+
+
+                if (client.connect(host, 80))
+              {int a10;
+                 a10=ds.getTempC(sensor10);
+                  Serial.print("Sensor 10: ");
+                   Serial.print(a10); // отправляем температуру
+                    Serial.println("C");
+                  Serial.println("GET 10 start.");
+                  client.println("GET /FPGAdev/api/Values/sendDatas?value="+String(a10)+"&type=10&device=7 HTTP/1.1");
+                  client.println("Host: 95.161.225.76");
+                  client.println("User-Agent: arduino-ethernet");
+                  client.println("Connection: close");
+                  client.println();
+                  Serial.println("GET 10 end.");
+
+
+                   client.stop();
+                 
+                  Serial.println("\n[Disconnected]\n\n");
+                  
+               }
+                  
+              else
+               {
+                Serial.println("connection failed!]\n\n");
+                client.stop();
+                
+                }
+
+                
+      delay(3000);
+  }
