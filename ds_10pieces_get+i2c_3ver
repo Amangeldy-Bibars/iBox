@@ -1,0 +1,350 @@
+  #include <ESP8266WiFi.h>
+  #include <OneWire.h>
+  #include <Wire.h>
+  #include <DallasTemperature.h>
+  const char* ssid = "FLATRON";
+  const char* password = "1234567890123";
+  const char* host = "95.161.225.76";
+
+
+OneWire oneWire(D7);
+DallasTemperature ds(&oneWire);
+
+DeviceAddress sensor1 = {0x28, 0xD7, 0x25, 0x77, 0x91, 0x4, 0x2, 0x5F};
+DeviceAddress sensor2 = {0x28, 0xA3, 0xDD, 0x77, 0x91, 0x9, 0x2, 0xA};
+DeviceAddress sensor3 = {0x28, 0xE5, 0x20, 0x77, 0x91, 0x6, 0x2, 0x9F};
+DeviceAddress sensor4 = {0x28, 0xC1, 0x9E, 0x77, 0x91, 0x8, 0x2, 0xC4};
+DeviceAddress sensor5 = {0x28, 0x3B, 0xBC, 0x77, 0x91, 0x9, 0x2, 0xC6};
+DeviceAddress sensor6 = {0x28, 0xD8, 0x36, 0x77, 0x91, 0x4, 0x2, 0x49};
+DeviceAddress sensor7 = {0x28, 0x1A, 0x33, 0x77, 0x91, 0x6, 0x2, 0xFB};
+DeviceAddress sensor8 = {0x28, 0x38, 0x51, 0x77, 0x91, 0x14, 0x2, 0xCC};
+DeviceAddress sensor9 = {0x28, 0x24, 0xCE, 0x77, 0x91, 0x9, 0x2, 0x57};
+DeviceAddress sensor10 = {0x28, 0xCA, 0x6E, 0x77, 0x91, 0x10, 0x2, 0x0};
+
+byte value[40];
+int buf[32];
+char ch[8];
+int address = 8;
+
+void I2C_p()
+{
+            Serial.print("\n I2C start.");
+            Wire.beginTransmission(address); 
+            Wire.write(value, 40);
+            Wire.endTransmission();
+            Serial.print("\n I2C finish.");
+}
+void ToI(int x2)
+{
+    int i,d = 1, k=0, exp2=0; 
+    int t[30]; 
+    double x, drob, n, y, z; 
+    x=x2; 
+    int cel = (int)x; 
+    while(cel) 
+    { 
+    t[k] = cel%2; 
+    k++; 
+    cel /= 2; 
+    } 
+    drob = modf(x, &n); 
+    int a[23]; 
+    for(i = 0; i < 23; i++) 
+    { 
+    drob *= 2; 
+    y = modf(drob, &z); 
+    a[i] = (int)z; 
+    if(drob >= 1) 
+    drob = drob - 1; 
+    } 
+    /* 
+    for(i=0; i<k; i++) 
+    Serial.print(t[i]); 
+    */ 
+    //---------------------— 
+    exp2=k-1+127; 
+    cel = (int)exp2; 
+    int t2[10], k3=0; 
+    d=1; 
+    while(cel) 
+    { 
+    t2[k3]= cel%2; 
+    k3++; 
+    cel /= 2; 
+    } 
+    int g=0; 
+    if(x>=0) 
+    {
+      buf[g]=0;
+      g++;
+    }
+    else 
+    {
+      buf[g]=1; 
+      g++;
+    }
+    for(i=7; i>=0; i--) { buf[g]=t2[i]; g++; } 
+    for(i=k-2; i>=0; i--) { buf[g]=t[i]; g++; } 
+    for(i = 0; i < 24-k; i++) { buf[g]=a[i]; g++; } 
+}
+
+
+
+void get_s(int a, int b)
+{
+  WiFiClient client;
+   if (client.connect(host, 80))
+              { 
+                  Serial.print("\n G  "+String(b)+":\n");
+                  Serial.println(a);                     
+                  Serial.println("GET start.");
+                  client.println("GET /FPGAdev/api/Values/sendDatas?value="+String(a)+"&type="+String(b)+"&device=8 HTTP/1.1");
+                  client.println("Host: 95.161.225.76");
+                  client.println("User-Agent: arduino-ethernet");
+                  client.println("Connection: close");
+                  client.println();
+                  Serial.println("GET end.");
+                  client.stop();                 
+                  Serial.println("\n[Disconnected]\n\n");                  
+               }                  
+              else
+               {
+                Serial.println("connection failed!]\n\n");
+                client.stop();                
+                }
+}
+
+long bin_to_dec (char *s)
+{
+   short i;
+   long res = 0;
+   
+   for ( i = 0 ; i < sizeof (long) * 8 && s[i] ; ++i )
+   {
+      res <<= 1;
+      res |= (s[i] - '0');
+   }
+   return res;
+} 
+
+void to_value(int i1, int i2, int v)
+{
+  int i, j=0;
+            for( i=i1; i<i2; i++)
+            {
+              ch[j]=buf[i]+48;
+              j++;
+             }
+             value[v]=bin_to_dec(ch);
+             
+}
+
+  void setup()
+  {
+      Serial.begin(115200);
+      delay(100);
+      
+      ds.begin();
+      delay(100);
+      Serial.println();
+      Serial.println();
+      Serial.print("Connecting to ");
+      Serial.println(ssid);
+      
+      WiFi.mode(WIFI_STA);
+      WiFi.begin(ssid, password);
+      
+      while (WiFi.status() != WL_CONNECTED)
+      {
+        delay(500);
+        Serial.print(".");
+      }
+      Serial.println("");
+      Serial.println("WiFi connected");  
+      Serial.println("IP address: ");
+      Serial.println(WiFi.localIP());
+  }  
+  
+  void loop() 
+  {
+            ds.requestTemperatures();
+             
+            
+            int x=0, i=0, i1=0, i2=8, v=0;
+            x=ds.getTempC(sensor1);
+            Serial.print("\n Sensor 1: ");
+            Serial.print(x);
+            Serial.println("C");            
+            get_s(x,1);
+            ToI(x);
+            for(i=0; i<32; i++)
+            Serial.print(buf[i]);
+            for(i=0; i<4; i++)
+            {
+              to_value(i1,i2,v);
+              i1+=8;
+              i2+=8;
+              v++;
+            }           
+
+            x=ds.getTempC(sensor2);
+            Serial.print("\n Sensor 2: ");
+            Serial.print(x);
+            Serial.println("C");            
+            get_s(x,2);
+            ToI(x);
+            for(i=0; i<32; i++)
+            Serial.print(buf[i]);
+            i1=0; i2=8;
+            for(i=0; i<4; i++)
+            {
+              to_value(i1,i2,v);
+              i1+=8;
+              i2+=8;
+              v++;
+            } 
+
+            x=ds.getTempC(sensor3);
+            Serial.print("\n Sensor 3: ");
+            Serial.print(x);
+            Serial.println("C");            
+            get_s(x,3);
+            ToI(x);
+            for(i=0; i<32; i++)
+            Serial.print(buf[i]);
+            i1=0; i2=8;
+            for(i=0; i<4; i++)
+            {
+              to_value(i1,i2,v);
+              i1+=8;
+              i2+=8;
+              v++;
+            }
+
+            x=ds.getTempC(sensor4);
+            Serial.print("\n Sensor 4: ");
+            Serial.print(x);
+            Serial.println("C");            
+            get_s(x,4);
+            ToI(x);
+            for(i=0; i<32; i++)
+            Serial.print(buf[i]);
+            i1=0; i2=8;
+            for(i=0; i<4; i++)
+            {
+              to_value(i1,i2,v);
+              i1+=8;
+              i2+=8;
+              v++;
+            }
+
+            x=ds.getTempC(sensor5);
+            Serial.print("\n Sensor 5: ");
+            Serial.print(x);
+            Serial.println("C");            
+            get_s(x,5);
+            ToI(x);
+            for(i=0; i<32; i++)
+            Serial.print(buf[i]);
+            i1=0; i2=8;
+            for(i=0; i<4; i++)
+            {
+              to_value(i1,i2,v);
+              i1+=8;
+              i2+=8;
+              v++;
+            }
+
+            x=ds.getTempC(sensor6);
+            Serial.print("\n Sensor 6: ");
+            Serial.print(x);
+            Serial.println("C");            
+            get_s(x,6);
+            ToI(x);
+            for(i=0; i<32; i++)
+            Serial.print(buf[i]);
+            i1=0; i2=8;
+            for(i=0; i<4; i++)
+            {
+              to_value(i1,i2,v);
+              i1+=8;
+              i2+=8;
+              v++;
+            }
+
+            x=ds.getTempC(sensor7);
+            Serial.print("\n Sensor 7: ");
+            Serial.print(x);
+            Serial.println("C");            
+            get_s(x,7);
+            ToI(x);
+            for(i=0; i<32; i++)
+            Serial.print(buf[i]);
+            i1=0; i2=8;
+            for(i=0; i<4; i++)
+            {
+              to_value(i1,i2,v);
+              i1+=8;
+              i2+=8;
+              v++;
+            }
+
+            x=ds.getTempC(sensor8);
+            Serial.print("\n Sensor 8: ");
+            Serial.print(x);
+            Serial.println("C");            
+            get_s(x,8);
+            ToI(x);
+            for(i=0; i<32; i++)
+            Serial.print(buf[i]);
+            i1=0; i2=8;
+            for(i=0; i<4; i++)
+            {
+              to_value(i1,i2,v);
+              i1+=8;
+              i2+=8;
+              v++;
+            }
+
+            x=ds.getTempC(sensor9);
+            Serial.print("\n Sensor 9: ");
+            Serial.print(x);
+            Serial.println("C");            
+            get_s(x,9);
+            ToI(x);
+            for(i=0; i<32; i++)
+            Serial.print(buf[i]);
+            i1=0; i2=8;
+            for(i=0; i<4; i++)
+            {
+              to_value(i1,i2,v);
+              i1+=8;
+              i2+=8;
+              v++;
+            }
+
+            x=ds.getTempC(sensor10);
+            Serial.print("\n Sensor 10: ");
+            Serial.print(x);
+            Serial.println("C");            
+            get_s(x,10);
+            ToI(x);
+            for(i=0; i<32; i++)
+            Serial.print(buf[i]);
+            i1=0; i2=8;
+            for(i=0; i<4; i++)
+            {
+              to_value(i1,i2,v);
+              i1+=8;
+              i2+=8;
+              v++;
+            }
+
+            Serial.print("\n\n\n------------------\n\n");
+            for(i=0; i<40; i++)
+            Serial.println(value[i]);    
+
+            I2C_p();                        
+               
+            delay(10000);
+  }
