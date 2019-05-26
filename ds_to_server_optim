@@ -21,12 +21,13 @@ DeviceAddress sensor8 = {0x28, 0x38, 0x51, 0x77, 0x91, 0x14, 0x2, 0xCC};
 DeviceAddress sensor9 = {0x28, 0x24, 0xCE, 0x77, 0x91, 0x9, 0x2, 0x57};
 DeviceAddress sensor10 = {0x28, 0xCA, 0x6E, 0x77, 0x91, 0x10, 0x2, 0x0};
 int x=0;
-void get_s(int a, int b)
+unsigned int k=0;
+void get_s(int a, int b, int k22)
 {
   WiFiClient client;
    if (client.connect(host, 80))
               { 
-                  client.println("GET /FPGAdev/api/Values/sendDatas?value="+String(a)+"&type="+String(b)+"&device=8 HTTP/1.1");
+                  client.println("GET /FPGAdev/api/Values/sendDatas?value="+String(a)+"&type="+String(b)+"&device=999&step="+String(k22)+" HTTP/1.1");
                   client.println("Host: 95.161.225.76");
                   client.println("User-Agent: arduino-ethernet");
                   client.println("Connection: close");
@@ -74,34 +75,34 @@ void get_s(int a, int b)
              x=0;
             x=ds.getTempC(sensor1);
             if(x==  (-127)) return;          
-            get_s(x,1);
+            get_s(x,1,k);
 
             x=ds.getTempC(sensor2);           
-            get_s(x,2);
+            get_s(x,2,k);
 
             x=ds.getTempC(sensor3);          
-            get_s(x,3);
+            get_s(x,3,k);
 
             x=ds.getTempC(sensor4);          
-            get_s(x,4);
+            get_s(x,4,k);
 
             x=ds.getTempC(sensor5);           
-            get_s(x,5);
+            get_s(x,5,k);
 
             x=ds.getTempC(sensor6);           
-            get_s(x,6);
+            get_s(x,6,k);
 
             x=ds.getTempC(sensor7);         
-            get_s(x,7);
+            get_s(x,7,k);
 
             x=ds.getTempC(sensor8);          
-            get_s(x,8);
+            get_s(x,8,k);
 
             x=ds.getTempC(sensor9);           
-            get_s(x,9);
+            get_s(x,9,k);
 
             x=ds.getTempC(sensor10);           
-            get_s(x,10);                      
-               
-      delay(3000);
+            get_s(x,10,k);                      
+            k++;   
+      delay(10000);
   }
