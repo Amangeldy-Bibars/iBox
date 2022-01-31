@@ -1,0 +1,78 @@
+#310122
+import serial
+
+try:
+    s = serial.Serial('COM4')
+except serial.SerialException:
+    print('kate')      
+
+values = bytearray([0xFF, 0x01, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 0x79])
+
+s.write(values)
+        
+res = s.read(26)
+
+print(res)
+print(type(res))
+
+pm1_val = int(str(res[2]),16)*256+int(str(res[3]),16)
+pm25_val = int(str(res[4]),16)*256+int(str(res[5]),16)
+pm10_val = int(str(res[6]),16)*256+int(str(res[7]),16)
+co2_val = int(str(res[8]),16)*256+int(str(res[9]),16)
+voc_val = int(str(res[10]),16)
+temp_val = (int(str(res[11]),16)*256+int(str(res[12]),16)-500)*0.1
+hum_val = int(str(res[13]),16)*256+int(str(res[14]),16)
+ch2o_val = (int(str(res[15]),16)*256+int(str(res[16]),16))*0.001
+co_val = (int(str(res[17]),16)*256+int(str(res[18]),16))*0.1
+o3_val = (int(str(res[19]),16)*256+int(str(res[20]),16))*0.01
+no2_val = (int(str(res[21]),16)*256+int(str(res[22]),16))*0.01
+
+print('pm1  : ', pm1_val)
+print('pm25 : ', pm25_val)
+print('pm10 : ', pm10_val)
+print('co2  : ', co2_val)
+print('voc  : ', voc_val)
+print('temp : ', temp_val)
+print('hum  : ', hum_val)
+print('ch2o : ', ch2o_val)
+print('co   : ', co_val)
+print('o3   : ', o3_val)
+print('no2  : ', no2_val)
+
+'''
+a1 = res[11]
+a2 = str(a1)
+a3=int(a2,16)
+
+a4 = res[12]
+a5 = str(a4)
+a6=int(a5,16)
+
+
+temp = (a3*256+a6-500)*0.1
+print(temp)
+'''
+
+#for x in range(25):
+#    print(x, ':', res[x])
+
+#s3 = res[1:]
+
+#s3 = res[:2]+res[25:]
+
+#print(s3)
+#print(type(s3))
+
+#s2 = res.decode()
+
+#s4 = s3.decode("unicode_escape")
+#print(s4)
+#print(type(s4))
+
+
+
+
+
+
+
+
