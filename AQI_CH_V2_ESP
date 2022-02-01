@@ -1,0 +1,130 @@
+//010222
+#include <stdlib.h>
+
+#define RXD2 14
+#define TXD2 27
+
+String send1 = "";
+
+byte send2[10] = {0xFF, 0x01, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 0x79};
+
+int res[100];
+
+unsigned int hexToDec(String hexString) {
+  
+  unsigned int decValue = 0;
+  int nextInt;
+  
+  for (int i = 0; i < hexString.length(); i++) {
+    
+    nextInt = int(hexString.charAt(i));
+    if (nextInt >= 48 && nextInt <= 57) nextInt = map(nextInt, 48, 57, 0, 9);
+    if (nextInt >= 65 && nextInt <= 70) nextInt = map(nextInt, 65, 70, 10, 15);
+    if (nextInt >= 97 && nextInt <= 102) nextInt = map(nextInt, 97, 102, 10, 15);
+    nextInt = constrain(nextInt, 0, 15);
+    
+    decValue = (decValue * 16) + nextInt;
+  }
+  
+  return decValue;
+}
+
+void setup(void)
+{
+  
+  Serial.begin(115200);
+  Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
+  pinMode(26, OUTPUT);
+  
+}
+
+void loop(void)
+{
+  digitalWrite(26, HIGH);
+  
+  
+  for(int i=0; i<10; i++)
+  {
+    Serial2.write(send2[i]);  
+  }
+
+  for(int i=0; i<27; i++)
+  {
+    if(Serial2.available())
+    {
+      res[i] = Serial2.read();
+      Serial.print(res[i]);
+      
+      //long int pm1_val = strtol(res, NULL,16)*256+strtol(res, NULL,16);
+      
+      
+    }
+     
+  }
+  
+  
+  double pm1_val = hexToDec(String(res[2]))*256+hexToDec(String(res[3]));
+  double pm25_val = hexToDec(String(res[4]))*256+hexToDec(String(res[5]));
+  double pm10_val = hexToDec(String(res[6]))*256+hexToDec(String(res[7]));
+  double co2_val = hexToDec(String(res[8]))*256+hexToDec(String(res[9]));
+  double voc_val = hexToDec(String(res[10]));
+  double temp_val = (hexToDec(String(res[11]))*256+hexToDec(String(res[12]))-500)*0.1;
+  double hum_val = hexToDec(String(res[13]))*256+hexToDec(String(res[14]));
+  double ch2o_val = (hexToDec(String(res[15]))*256+hexToDec(String(res[16])))*0.001;
+  double co_val = (hexToDec(String(res[17]))*256+hexToDec(String(res[18])))*0.1;
+  double o3_val = (hexToDec(String(res[19]))*256+hexToDec(String(res[20])))*0.01;
+  double no2_val = (hexToDec(String(res[21]))*256+hexToDec(String(res[22])))*0.01;
+  
+  Serial.print("\n pm1 : ");
+  Serial.println(pm1_val);
+
+  Serial.print("pm25 : ");
+  Serial.println(pm25_val);
+
+  Serial.print("pm10 : ");
+  Serial.println(pm10_val);
+
+  Serial.print("co2 : ");
+  Serial.println(co2_val);
+
+  Serial.print("voc : ");
+  Serial.println(voc_val);
+
+  Serial.print("pm1 : ");
+  Serial.println(pm1_val);
+
+  Serial.print("temp : ");
+  Serial.println(temp_val);
+
+  Serial.print("hum : ");
+  Serial.println(hum_val);
+
+  Serial.print("ch2o : ");
+  Serial.println(ch2o_val);
+
+  Serial.print("co : ");
+  Serial.println(co_val);
+
+  Serial.print("o3 : ");
+  Serial.println(o3_val);
+
+  Serial.print("no2 : ");
+  Serial.println(no2_val);
+
+  
+  
+
+  
+Serial.println(" ");
+  delay(3000);
+}
+
+
+
+
+
+
+
+
+
+
