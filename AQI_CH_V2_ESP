@@ -90,9 +90,6 @@ void loop(void)
   Serial.print("voc : ");
   Serial.println(voc_val);
 
-  Serial.print("pm1 : ");
-  Serial.println(pm1_val);
-
   Serial.print("temp : ");
   Serial.println(temp_val);
 
